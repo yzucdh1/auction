@@ -7,7 +7,7 @@ contract NftAuctionV2 is NftAuction {
 
     constructor(address _platformFeeRecipient) NftAuction(_platformFeeRecipient) {}
 
-    function version() external pure returns (string memory) {
-        return "NftAuction V2.0.0";
+    function getVersion() public override pure returns (string memory) {
+        return "2.0.0";
     }
 }

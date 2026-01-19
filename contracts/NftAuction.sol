@@ -169,4 +169,8 @@ contract NftAuction is ReentrancyGuard {
             royaltyAmount = 0;
         }
     }
+
+    function getVersion() public virtual pure returns (string memory) {
+        return "1.0.0";
+    }
 }
