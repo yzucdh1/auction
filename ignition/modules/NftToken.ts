@@ -1,6 +1,8 @@
 import { buildModule } from "@nomicfoundation/hardhat-ignition/modules";
 
-export default buildModule("NftTokenModule", (m) => {
+const nftTokenModule = buildModule("NftTokenModule", (m) => {
   const nftToken = m.contract("NftToken");
   return { nftToken };
 });
+
+export default nftTokenModule;

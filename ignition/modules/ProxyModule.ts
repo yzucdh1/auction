@@ -22,4 +22,4 @@ const nftAuctionModule = buildModule("NftAuctionModule", (m) => {
   return { nftAuction, proxyAdmin, proxy };
 });
 
-export default { nftAuctionModule };
+export default nftAuctionModule;
