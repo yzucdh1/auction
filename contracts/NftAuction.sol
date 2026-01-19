@@ -27,17 +27,20 @@ contract NftAuction is ReentrancyGuard {
         address indexed nftContract,
         uint256 tokenId,
         uint256 startPrice,
-        uint256 endTime
+        uint256 endTime,
+        uint256 usdStartPrice
     );
     event BidPlaced(
         uint256 indexed auctionId,
         address indexed bidder,
-        uint256 amount
+        uint256 amount,
+        uint256 usdAmount
     );
     event AuctionFinalized(
         uint256 indexed auctionId,
         address indexed winner,
-        uint256 amount
+        uint256 amount,
+        uint256 usdAmount
     );
     event RefundWithdrawn(
         uint256 indexed auctionId,
@@ -107,7 +110,8 @@ contract NftAuction is ReentrancyGuard {
             _nftContract,
             _tokenId,
             _startPrice,
-            block.timestamp + _duration
+            block.timestamp + _duration,
+            _convertEthToUsd(_startPrice)
         );
         return auctionId;
     }
@@ -135,7 +139,12 @@ contract NftAuction is ReentrancyGuard {
         auction.highestBidder = msg.sender;
 
         // 记录事件
-        emit BidPlaced(_auctionId, msg.sender, msg.value);
+        emit BidPlaced(
+            _auctionId,
+            msg.sender,
+            msg.value,
+            _convertEthToUsd(msg.value)
+        );
     }
 
     function finalizeAuction(uint256 _auctionId) external nonReentrant {
@@ -199,11 +208,12 @@ contract NftAuction is ReentrancyGuard {
             emit AuctionFinalized(
                 _auctionId,
                 auction.highestBidder,
-                auction.highestBid
+                auction.highestBid,
+                _convertEthToUsd(auction.highestBid)
             );
         } else {
             // 没有出价,记录事件
-            emit AuctionFinalized(_auctionId, address(0), 0);
+            emit AuctionFinalized(_auctionId, address(0), 0, 0);
         }
     }
 
@@ -222,6 +232,20 @@ contract NftAuction is ReentrancyGuard {
         require(success, "Refund withdrawal failed");
 
         emit RefundWithdrawn(_auctionId, msg.sender, totalRefund);
+    }
+
+    function getStartPriceInUsd(
+        uint256 _auctionId
+    ) external view returns (uint256) {
+        Auction storage auction = auctions[_auctionId];
+        return _convertEthToUsd(auction.startPrice);
+    }
+
+    function getHighestBidInUsd(
+        uint256 _auctionId
+    ) external view returns (uint256) {
+        Auction storage auction = auctions[_auctionId];
+        return _convertEthToUsd(auction.highestBid);
     }
 
     function _getRoyaltyInfo(
@@ -243,19 +267,36 @@ contract NftAuction is ReentrancyGuard {
         }
     }
 
-    function getChainlinkDataFeedLatestAnswer() public view returns (int256) {
-        // prettier-ignore
+    function _getEthUsdPrice() internal view returns (uint256) {
         (
-      /* uint80 roundId */
-      ,
-      int256 answer,
-      /*uint256 startedAt*/
-      ,
-      /*uint256 updatedAt*/
-      ,
-      /*uint80 answeredInRound*/
-    ) = dataFeed.latestRoundData();
-        return answer;
+            uint80 roundId,
+            int256 answer,
+            ,
+            uint256 updatedAt,
+            uint80 answeredInRound
+        ) = dataFeed.latestRoundData();
+
+        // 喂价异常校验
+        require(answer > 0, "Invalid negative price"); // 价格不能为负
+        require(updatedAt > 0, "Round not complete"); // 喂价已更新
+        require(roundId == answeredInRound, "Stale price"); // 喂价未过期
+
+        // 将Chainlink返回的int256转为uint256，且统一小数位数（8位）
+        return uint256(answer);
+    }
+
+    function _convertEthToUsd(
+        uint256 ethAmount
+    ) internal view returns (uint256) {
+        if (ethAmount == 0) return 0;
+
+        uint256 ethUsdPrice = _getEthUsdPrice(); // 例如：2000 USD/ETH (值为 2000 * 10^8)
+
+        // 计算逻辑：(ethAmount * ethUsdPrice) / (10^18 * 10^8)
+        // 10^18: wei转ETH；10^8: Chainlink 8位小数
+        uint256 usdAmount = (ethAmount * ethUsdPrice) / (10 ** (18 + 8));
+
+        return usdAmount;
     }
 
     function getVersion() public pure virtual returns (string memory) {
