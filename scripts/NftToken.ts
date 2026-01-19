@@ -1,11 +1,11 @@
-import { network } from "hardhat";
+import hre from "hardhat";
 
-const { ethers } = await network.connect({
-  network: "hardhatOp",
-  chainType: "op",
+const { ethers } = await hre.network.connect({
+  network: "sepolia",
+  chainType: "l1",
 });
 
-console.log("Sending transaction using the OP chain type");
+console.log("Sending transaction using the l1 chain type");
 
 const [sender] = await ethers.getSigners();
 

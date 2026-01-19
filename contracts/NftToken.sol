@@ -14,11 +14,15 @@ contract NftToken is ERC721, ERC721URIStorage, ERC2981, Ownable {
 
     constructor() ERC721("NFT", "NFT") Ownable(msg.sender) {}
 
-    function tokenURI(uint256 tokenId) public view override(ERC721, ERC721URIStorage) returns (string memory) {
+    function tokenURI(
+        uint256 tokenId
+    ) public view override(ERC721, ERC721URIStorage) returns (string memory) {
         return super.tokenURI(tokenId);
     }
 
-    function supportsInterface(bytes4 interfaceId) public view override(ERC721, ERC721URIStorage, ERC2981) returns (bool) {
+    function supportsInterface(
+        bytes4 interfaceId
+    ) public view override(ERC721, ERC721URIStorage, ERC2981) returns (bool) {
         return super.supportsInterface(interfaceId);
     }
 
@@ -28,7 +32,7 @@ contract NftToken is ERC721, ERC721URIStorage, ERC2981, Ownable {
 
         _tokenIdCount++;
         uint256 tokenId = _tokenIdCount;
-        
+
         _safeMint(msg.sender, tokenId);
         _setTokenURI(tokenId, _tokenURI);
 
