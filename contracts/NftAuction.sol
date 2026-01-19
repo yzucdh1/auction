@@ -92,7 +92,8 @@ contract NftAuction is ReentrancyGuard {
             "Contract is not approved to transfer this NFT"
         );
 
-        uint256 auctionId = auctionCount++;
+        auctionCount++;
+        uint256 auctionId = auctionCount;
         auctions[auctionId] = Auction({
             seller: msg.sender,
             nftContract: _nftContract,
@@ -121,6 +122,12 @@ contract NftAuction is ReentrancyGuard {
         Auction storage auction = auctions[_auctionId];
         require(auction.active, "Auction is not active");
         require(block.timestamp < auction.endTime, "Auction has ended");
+
+        // 防止卖家自己出价
+        require(
+            msg.sender != auction.seller,
+            "Seller cannot bid on own auction"
+        );
 
         // 出价必须高于当前最高出价,每次出价不得低于当前最高出价10%
         uint256 minBid = auction.highestBid == 0
