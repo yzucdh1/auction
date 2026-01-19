@@ -9,9 +9,9 @@ To learn more about the Hardhat 3 Beta, please visit the [Getting Started guide]
 This project includes:
 
 - a Hardhat configuration file.
-- contracts - Solidity contract files
-- scripts - Typescript script files
-- TypeScript integration tests using `mocha` and ethers.js
+- contracts - Solidity contract files.
+- scripts - Typescript script files.
+- TypeScript integration tests using `mocha` and ethers.js.
 - Examples demonstrating how to connect to different types of networks, including locally simulating OP mainnet.
 
 ## Usage
@@ -74,10 +74,22 @@ npx hardhat ignition deploy --network sepolia ignition/modules/UpgradeModule.ts
 
 ### Sepolia contract address
 
-nftToken address : 0x4AF12344c14F901EC3486c40Da93Fd537bd8EEEd
-nftAuctionV1 address : 0x1c4a7FF3636998739A3745aa552EFe8642D4f15c
-nftAuctionV2 address : 0x1EeB5c9D7cc46b90e5F232e84DC49593860638e5
-proxy contract address : 0xf1717512f66a36C4d841D510D6fB17506fAb0605
+NftToken address : 0x4AF12344c14F901EC3486c40Da93Fd537bd8EEEd
+
+NftAuctionV1 address : 0x1c4a7FF3636998739A3745aa552EFe8642D4f15c
+
+NftAuctionV2 address : 0x1EeB5c9D7cc46b90e5F232e84DC49593860638e5
+
+Proxy contract address : 0xf1717512f66a36C4d841D510D6fB17506fAb0605
 
 ### Test result
-![alt text](3dacfbb2-e5f7-4734-8ab0-447549e6e0ec.png)
+
+![alt text](pics/8d27654b-32cf-41ff-b1fc-41666ffc013d.png)
+
+### Gas status
+
+![alt text](pics/2af9d5a0-e459-4bc8-9740-b039e250e390.png)
+
+### Test converage
+
+![alt text](pics/b5574a2e-a09d-428b-9b08-b1f16e4a71ba.png)
