@@ -6,8 +6,8 @@ const { ethers } = await hre.network.connect({
 });
 
 const nftTokenContractAddress = "0x4AF12344c14F901EC3486c40Da93Fd537bd8EEEd"; // Replace with your contract address
-const auctionContractAddress = "";
 
+// mint NFT
 async function mintNft() {
   console.log("Connecting to nft token contract at address:", nftTokenContractAddress);
   const nftContract = await ethers.getContractAt("NftToken", nftTokenContractAddress);
@@ -30,7 +30,31 @@ async function mintNft() {
   console.log("Transaction confirmed in block:", receipt.blockNumber);
 }
 
-mintNft()
+// approve NFT
+async function approval() {
+  console.log("Connecting to nft token contract at address:", nftTokenContractAddress);
+  const nftContract = await ethers.getContractAt("NftToken", nftTokenContractAddress);
+
+  // Replace with actual operator address and token ID
+  const tx = await nftContract.approve("0xf1717512f66a36C4d841D510D6fB17506fAb0605", 1);
+
+  console.log("Approving NFT, transaction hash:", tx.hash);
+  const receipt = await tx.wait();
+  if (receipt === null || receipt === undefined) {
+    console.log("Transaction receipt is null or undefined");
+    return;
+  }
+  console.log("Transaction confirmed in block:", receipt.blockNumber);
+}
+
+// mintNft()
+//   .then(() => process.exit(0))
+//   .catch((error) => {
+//     console.error("TS脚本执行出错:", error);
+//     process.exit(1);
+//   });
+
+approval()
   .then(() => process.exit(0))
   .catch((error) => {
     console.error("TS脚本执行出错:", error);
